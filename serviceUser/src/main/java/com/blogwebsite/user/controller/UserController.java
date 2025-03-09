@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.blogwebsite.user.proxy.BlogProxy;
 import com.blogwebsite.user.proxy.UserProxy;
 import com.blogwebsite.user.service.impl.UserServiceImpl;
 
@@ -22,33 +23,81 @@ public class UserController {
 	@Autowired
 	private UserServiceImpl userImpl;
 	
-	@PostMapping("/register") //user & admin working
+	//working register user
+	@PostMapping("/register") //user & admin 
 	public ResponseEntity<?> registerUser(@RequestBody UserProxy user)
 	{
 		return ResponseEntity.status(HttpStatus.CREATED).body(userImpl.registerUser(user));
 	}
 	
-	@DeleteMapping("/deleteById/{id}") //admin working
+	//working -delete user by id
+	@DeleteMapping("/deleteById/{id}") //admin
 	public ResponseEntity<?> deleteById(@PathVariable("id") Integer id)
 	{
 		return ResponseEntity.status(HttpStatus.CREATED).body(userImpl.deleteUser(id));
 	}
 	
-	@GetMapping("/getAll") //admin working
+	
+	//working - get all users
+	@GetMapping("/getAll") //admin 
 	public ResponseEntity<?> getAllUser()
 	{
 		return ResponseEntity.status(HttpStatus.CREATED).body(userImpl.getAllUser());
 	}
 	
-	@GetMapping("/getByUserName/{uname}") //admin working
+	//working -get user by usernamme
+	@GetMapping("/getByUserName/{uname}") //admin
 	public ResponseEntity<?> getUserByUserName(@PathVariable("uname") String userName)
 	{
 		return ResponseEntity.status(HttpStatus.CREATED).body(userImpl.getUserByUserName(userName));
 	}
 	
+	//update user by user id
 	@PutMapping("/update/{id}") //working
 	public ResponseEntity<?> updateUserById(@RequestBody UserProxy user,@PathVariable("id") Integer id)
 	{
 		return ResponseEntity.status(HttpStatus.OK).body(userImpl.updateUserById(id, user));
+	}
+	
+	//get user by user id
+	@GetMapping("/getById/{id}")
+	public ResponseEntity<?> getUserById(@PathVariable("id") Integer id)
+	{
+		return ResponseEntity.status(HttpStatus.ACCEPTED).body(userImpl.getUserByUserId(id));
+	}
+	
+	//search blog by title
+	@GetMapping("/getBlogTitle/{title}") //working
+	public ResponseEntity<?> searchBlogByTitle(@PathVariable("title") String title)
+	{
+		return ResponseEntity.status(HttpStatus.ACCEPTED).body(userImpl.searchBlogByTitle(title));
+	}
+	
+	//user can create blog
+	@PostMapping("/createBlog/{id}") //working
+	public ResponseEntity<?> createBlog(@RequestBody BlogProxy blogProxy,@PathVariable("id") Integer id)
+	{
+		return ResponseEntity.status(HttpStatus.CREATED).body(userImpl.createBlog(blogProxy, id));
+	}
+
+	//user can delete blog
+	@DeleteMapping("/deleteBlog/{id}") //working
+	public ResponseEntity<?> deleteBlog(@PathVariable("id") Integer id)
+	{
+		return ResponseEntity.status(HttpStatus.OK).body(userImpl.deleteBlog(id));
+	}
+	
+	//user can existing update blog
+	@PutMapping("/updateBlog/{id}") //working
+	public ResponseEntity<?> updateBlog(@RequestBody BlogProxy blogProxy,@PathVariable Integer id)
+	{
+		return ResponseEntity.status(HttpStatus.OK).body(userImpl.updateBlog(blogProxy, id));
+	}
+	
+	//get all blog
+	@GetMapping("/getAllBlog") //working
+	public ResponseEntity<?> getAllBlogs()
+	{
+		return ResponseEntity.status(HttpStatus.OK).body(userImpl.getAllBlogs());
 	}
  }

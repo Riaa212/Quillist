@@ -5,9 +5,12 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
+import com.blogwebsite.blog.FeignClient.UserClient;
 import com.blogwebsite.blog.domain.BlogEntity;
 import com.blogwebsite.blog.proxy.BlogProxy;
+import com.blogwebsite.blog.proxy.UserProxy;
 import com.blogwebsite.blog.repository.BlogRepo;
 import com.blogwebsite.blog.service.BlogService;
 import com.blogwebsite.blog.utils.Helper;
@@ -16,16 +19,33 @@ import com.blogwebsite.blog.utils.Helper;
 public class BlogServiceImpl implements BlogService
 {
 	
+	private static final String USER_SERVICE_URL = "http://localhost:8087/user/";
+	
 	@Autowired
 	private BlogRepo blogRepo;
 
 	@Autowired
 	private Helper helper;
 
+	@Autowired
+	private RestTemplate restTemplate;
+	
+	@Autowired
+	private UserClient userClient;
+	
 	@Override
-	public String createBlog(BlogProxy blogproxy) {
+	public String createBlog(BlogProxy blogproxy,Integer userid) {
 		BlogEntity convertBlogProxyToEntity = helper.convertBlogProxyToEntity(blogproxy);
-		blogRepo.save(convertBlogProxyToEntity);
+//		UserProxy user = restTemplate.getForObject(USER_SERVICE_URL+"/getById/"+userid, UserProxy.class);
+		
+		UserProxy user = userClient.getUserByUserId(userid);
+		
+		if(user!=null)
+		{
+			System.out.println(userid);
+			convertBlogProxyToEntity.setUser_id(userid);
+			blogRepo.save(convertBlogProxyToEntity);
+		}
 		return "saved successfully";
 	}
 
@@ -61,4 +81,8 @@ public class BlogServiceImpl implements BlogService
 		return helper.convertBlogListEntityToProxy(all);
 	}
 	
+	public UserProxy getUserByUserId(Integer id)
+	{
+	return	userClient.getUserByUserId(id);
+	}
 }

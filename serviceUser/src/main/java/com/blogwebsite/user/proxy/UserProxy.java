@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class UserProxy {
 
-	//private Integer id;
+	private Integer id;
 	private String userName;
 	private String password;
 	private String email;

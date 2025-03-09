@@ -5,7 +5,9 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
+import com.blogwebsite.user.FeignClient.BlogClient;
 import com.blogwebsite.user.domain.UserEntity;
 import com.blogwebsite.user.proxy.BlogProxy;
 import com.blogwebsite.user.proxy.UserProxy;
@@ -23,9 +25,17 @@ public class UserServiceImpl implements UserService
 	@Autowired
 	private Helper helper;
 	
+	@Autowired
+	private RestTemplate restTemplate;
+	
+	@Autowired
+	private BlogClient blogClient;
+	
+	//private final String blogUrl="http://localhost:8088/blog/";
+	
 	@Override
 	public String registerUser(UserProxy user) {
-		userRepo.save(helper.convertUserProxyToEntity(user));
+		userRepo.save(helper.convert(user, UserEntity.class));
 		return "register successfully";
 	}
 
@@ -36,43 +46,42 @@ public class UserServiceImpl implements UserService
 	}
 
 	@Override
-	public String createBlog(BlogProxy blog) {
-		// TODO Auto-generated method stub
+	public String createBlog(BlogProxy blog,Integer id) {
+		blogClient.createBlog(blog, id);
+		return "saved";
+	}
+
+	@Override
+	public String deleteBlog(Integer id) {
+		blogClient.deleteBlog(id);
 		return null;
 	}
 
 	@Override
-	public String deleteBlog(BlogProxy blog) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public String updateBlog(BlogProxy blog) {
-		// TODO Auto-generated method stub
-		return null;
+	public String updateBlog(BlogProxy blog,Integer id) {
+		blogClient.updateBlog(blog, id);
+		return "updated...";
 	}
 
 	@Override
 	public List<UserProxy> getAllUser() {
-		List<UserEntity> all = userRepo.findAll();
-		return helper.convertUserListEntityToProxy(all);
+		return helper.convertList(userRepo.findAll(), UserProxy.class);
 	}
 
 	@Override
 	public UserProxy getUserByUserName(String userName) {
-		UserEntity byUserName = userRepo.findByUserName(userName);
-		return helper.convertUserEntityToProxy(byUserName);
+		return helper.convert(userRepo.findByUserName(userName), UserProxy.class);
 	}
 
-	@Override
-	public BlogProxy searchBlogByTitle(String title) {
-		// TODO Auto-generated method stub
-		return null;
+	@Override //search blog by user
+	public List<BlogProxy> searchBlogByTitle(String title) {
+		
+		return blogClient.searchBlogByTitle(title);
 	}
 
 	@Override
 	public UserProxy updateUserById(Integer id, UserProxy user) {
+		
 		Optional<UserEntity> byId = userRepo.findById(id);
 		
 		if(byId.isPresent())
@@ -84,6 +93,16 @@ public class UserServiceImpl implements UserService
 			userRepo.save(userEntity);
 		}
 		return user;
+	}
+
+	@Override
+	public UserProxy getUserByUserId(Integer id) {
+		return helper.convert(userRepo.findById(id), UserProxy.class);
+	}
+
+	@Override
+	public List<BlogProxy> getAllBlogs() {
+		return 	blogClient.getAllBlogs();
 	}
 	
 	

@@ -1,4 +1,4 @@
-package com.blogwebsite.admin.proxy;
+package com.blogwebsite.blog.proxy;
 
 import java.util.Date;
 import java.util.List;
@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class UserProxy {
 
-	//private Integer id;
+	private Integer id;
 	private String userName;
 	private String password;
 	private String email;

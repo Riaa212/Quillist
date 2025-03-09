@@ -22,33 +22,46 @@ public class BlogController {
 	@Autowired
 	private BlogServiceImpl blogImpl;
 	
-	@PostMapping("/save")
-	public ResponseEntity<?> saveBlog(@RequestBody BlogProxy blogProxy)
+	//create blog
+	@PostMapping("/save/{id}") //working -user
+	public ResponseEntity<?> saveBlog(@RequestBody BlogProxy blogProxy,@PathVariable("id") Integer id)
 	{
-		return ResponseEntity.status(HttpStatus.CREATED).body(blogImpl.createBlog(blogProxy));
+		return ResponseEntity.status(HttpStatus.CREATED).body(blogImpl.createBlog(blogProxy,id));
 	}
 	
-	@DeleteMapping("/delete/{id}")
+	//delete blog
+	@DeleteMapping("/delete/{id}") //working -user
 	public ResponseEntity<?> deleteBlog(@PathVariable("id") Integer id)
 	{
 		return ResponseEntity.status(HttpStatus.CREATED).body(blogImpl.deleteBlog(id));
 	}
 	
-	@PutMapping("/update/{id}")
+	//update blog
+	@PutMapping("/update/{id}")  //working -user
 	public ResponseEntity<?> updateBlog(@RequestBody BlogProxy blogProxy,@PathVariable Integer id)
 	{
 		return ResponseEntity.status(HttpStatus.CREATED).body(blogImpl.updateBlog(blogProxy, id));
 	}
 	
-	@GetMapping("/searchBlogByTitle/{title}")
+	//search blog by title 
+	@GetMapping("/searchBlogByTitle/{title}") //working -user
 	public ResponseEntity<?> searchBlogByTitle(@PathVariable("title") String title)
 	{
 		return ResponseEntity.status(HttpStatus.ACCEPTED).body(blogImpl.searchByBlogTitle(title));
 	}
 	
-	@GetMapping("/getAllBlogs")
+	//get all blogs
+	@GetMapping("/getAllBlogs") //working -user
 	public ResponseEntity<?> getAllBlog()
 	{
 		return ResponseEntity.status(HttpStatus.ACCEPTED).body(blogImpl.getAllBlogs());
+	}
+	
+	
+	//get user by id for user id reference 
+	@GetMapping("/getUserById/{id}") //working - to store user id in blog table
+	public ResponseEntity<?> getUserById(@PathVariable("id") Integer id)
+	{
+		return ResponseEntity.status(HttpStatus.ACCEPTED).body(blogImpl.getUserByUserId(id));
 	}
 }
